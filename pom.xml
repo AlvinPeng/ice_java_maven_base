@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>itest</groupId>
+    <artifactId>ice</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <slice.home.dir>C:\Program Files (x86)\ZeroC\Ice-3.6.3</slice.home.dir>
+        <ant.ice.dir>C:\Users\Administrator\.m2\repository\com\zeroc\ant-ice</ant.ice.dir>
+        <slice.files.path>${project.basedir}/src/main/resources/slice</slice.files.path>
+        <generated.files.path>${project.basedir}/src/main/generated</generated.files.path>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.zeroc</groupId>
+            <artifactId>ice</artifactId>
+            <version>3.6.3</version>
+            <scope>system</scope>
+            <systemPath>${slice.home.dir}\lib\Ice-3.6.3.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.zeroc</groupId>
+            <artifactId>icebox</artifactId>
+            <version>3.6.3</version>
+            <scope>system</scope>
+            <systemPath>${slice.home.dir}\lib\Icebox-3.6.3.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>com.zeroc</groupId>
+            <artifactId>ant-ice</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target name="slice2java">
+                                <taskdef name="slice2java" classname="Slice2JavaTask" classpathref="maven.plugin.classpath"/>
+                                <slice2java outputdir="${generated.files.path}">
+                                    <fileset dir="${slice.files.path}" includes="*.ice"/>
+                                </slice2java>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.zeroc</groupId>
+                        <artifactId>ant-ice</artifactId>
+                        <version>4.0.0</version>
+                        <scope>system</scope>
+                        <systemPath>${ant.ice.dir}/4.0.0/ant-ice-4.0.0.jar</systemPath>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.7</version>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>generated</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <repositories>
+        <!-- 如有Nexus私服, 取消注释并指向正确的服务器地址.-->
+        <repository>
+            <id>ice</id>
+            <name>ice Nexus Repository</name>
+            <url>https://repo.zeroc.com/nexus/content/repositories/releases/</url>
+        </repository>
+    </repositories>
+</project>
